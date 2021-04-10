@@ -14,7 +14,7 @@ namespace RpConfigConverter
         {
             var changes = CreateChanges();
             SaveChanges(changes);
-            LoadChanges(args[1]);
+            changes = LoadChanges(args[1]);
             List<Variable> variables = LoadVariables(args);
             if (changes.Variables == null)
                 changes.Variables = new List<Variable>();
@@ -77,6 +77,7 @@ namespace RpConfigConverter
         {
             JavaScriptSerializer js = new JavaScriptSerializer();
             var jsonString = js.Serialize(script);
+            jsonString = JSONFormatter.FormatOutput(jsonString);
             File.WriteAllText("configchange.json", jsonString);
         }
 
