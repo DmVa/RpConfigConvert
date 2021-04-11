@@ -12,9 +12,9 @@ namespace RpConfigConverter
     {
         static void Main(string[] args)
         {
-            var changes = CreateChanges();
-            SaveChanges(changes);
-            changes = LoadChanges(args[1]);
+            //var changes = CreateChangesArchive();
+            //SaveChanges(changes, args[1]);
+            var changes = LoadChanges(args[1]);
             List<Variable> variables = LoadVariables(args);
             if (changes.Variables == null)
                 changes.Variables = new List<Variable>();
@@ -73,22 +73,32 @@ namespace RpConfigConverter
             return script;
         }
 
-        private static void SaveChanges(ConfigChange script)
+        private static void SaveChanges(ConfigChange script, string stringFileName)
         {
             JavaScriptSerializer js = new JavaScriptSerializer();
             var jsonString = js.Serialize(script);
             jsonString = JSONFormatter.FormatOutput(jsonString);
-            File.WriteAllText("configchange.json", jsonString);
+            File.WriteAllText(stringFileName, jsonString);
         }
 
-        private static ConfigChange CreateChanges()
+        private static ConfigChange CreateChangesC1()
         {
             var change = new ConfigChange();
             change.Variables = new List<Variable>();
             change.Changes = new List<Change>();
-            change.Variables.Add(new Variable() { Name = "machine", Value = "DK03SV001547" });
+            change.Variables.Add(new Variable() { Name = "machine", Value = "DK01SV1547" });
             change.Changes.Add(new Change() { Value = "http://machine/C1Api/", Attribute = "value", XPath = "/configuration/appSettings/add[@key='api.Address']" });
             return change;
         }
-    }
+
+		private static ConfigChange CreateChangesArchive()
+		{
+			var change = new ConfigChange();
+			change.Variables = new List<Variable>();
+			change.Changes = new List<Change>();
+			change.Variables.Add(new Variable() { Name = "machine", Value = "DK01SV1547" });
+			change.Changes.Add(new Change() { Value = "http://machine/C1Api/", Attribute = "value", XPath = "/configuration/appSettings/add[@key='api.Address']" });
+			return change;
+		}
+	}
 }
