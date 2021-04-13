@@ -12,9 +12,10 @@ namespace RpConfigConverter
     {
         static void Main(string[] args)
         {
-            //var changes = CreateChangesArchive();
-            //SaveChanges(changes, args[1]);
-            var changes = LoadChanges(args[1]);
+			var changes = CreateChangesC1Api();
+			//var changes = CreateChangesC1();
+			SaveChanges(changes, args[1]);
+            changes = LoadChanges(args[1]);
             List<Variable> variables = LoadVariables(args);
             if (changes.Variables == null)
                 changes.Variables = new List<Variable>();
@@ -88,8 +89,22 @@ namespace RpConfigConverter
             change.Changes = new List<Change>();
             change.Variables.Add(new Variable() { Name = "machine", Value = "DK01SV1547" });
             change.Changes.Add(new Change() { Value = "http://machine/C1Api/", Attribute = "value", XPath = "/configuration/appSettings/add[@key='api.Address']" });
-            return change;
+			change.Changes.Add(new Change() { Value = "http://machine/CoricArchive", Attribute = "value", XPath = "/configuration/appSettings/add[@key='CoricArchivePath']" });
+			change.Changes.Add(new Change() { Value = "http://machine/Help", Attribute = "value", XPath = "/configuration/appSettings/add[@key='C1HelpPageUrl']" });
+			return change;
         }
+
+		private static ConfigChange CreateChangesC1Api()
+		{
+			var change = new ConfigChange();
+			change.Variables = new List<Variable>();
+			change.Changes = new List<Change>();
+			change.Variables.Add(new Variable() { Name = "machine", Value = "DK01SV1547" });
+			change.Changes.Add(new Change() { Value = "http://machine/C1", Attribute = "value", XPath = "/configuration/appSettings/add[@key='C1Url']" });
+			change.Changes.Add(new Change() { Value = "http://machine/ConfigurationServer/Connectivity.svc/basic", Attribute = "address", XPath = "/configuration/system.serviceModel/client/endpoint[@binding='basicHttpBinding']" });
+			change.Changes.Add(new Change() { Value = "net.tcp://machine/CoricDataCommunicationService/MessageProcessor.svc/tcp", Attribute = "address", XPath = "/configuration/system.serviceModel/client/endpoint[@binding='netTcpBinding']" });
+			return change;
+		}
 
 		private static ConfigChange CreateChangesArchive()
 		{
